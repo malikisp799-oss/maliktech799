@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malik Technical & Internet Services | Next-Gen Fiber & Wireless Broadband</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Google Fonts for Modern UI & Urdu Noto Nastaliq -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #00ff88;
+            --dark-bg: #030712;
+            --card-bg: rgba(13, 22, 42, 0.85);
+            --border-color: rgba(0, 242, 254, 0.25);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 15%, rgba(0, 242, 254, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 90% 85%, rgba(79, 172, 254, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.08) 0%, transparent 60%),
+                linear-gradient(135deg, #030712 0%, #080e1a 50%, #030712 100%);
+            background-attachment: fixed;
+        }
+
+        /* Canvas Background for 3D Interactive Particles */
+        #hero-3d-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Loading Screen Style */
+        #loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #030712;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader-logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+            padding: 0 15px;
+        }
+
+        .loader-logo i {
+            color: var(--primary);
+            animation: bounce 1s infinite alternate;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        /* Welcome Popup Modal Styles */
+        #welcome-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 7, 18, 0.88);
+            backdrop-filter: blur(12px);
+            z-index: 4000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        #welcome-popup-overlay.show-popup {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .welcome-popup-card {
+            background: linear-gradient(135deg, rgba(13, 22, 42, 0.98), rgba(7, 14, 28, 0.98));
+            border: 2px solid var(--primary);
+            border-radius: 24px;
+            padding: 30px 20px;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 25px 70px rgba(0, 242, 254, 0.3);
+            text-align: center;
+            transform: scale(0.85);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #welcome-popup-overlay.show-popup .welcome-popup-card {
+            transform: scale(1);
+        }
+
+        .welcome-close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .welcome-close-btn:hover {
+            background: var(--primary);
+            color: #030712;
+            transform: rotate(90deg);
+        }
+
+        .welcome-icon-box {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #030712;
+            margin: 0 auto 16px;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+        }
+
+        .welcome-popup-card h2 {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+            direction: rtl;
+        }
+
+        .welcome-popup-card p {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            direction: rtl;
+            text-align: center;
+        }
+
+        .welcome-footer-badge {
+            display: inline-block;
+            background: rgba(0, 242, 254, 0.12);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        /* Custom Success Toast Popup */
+        #success-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, #00ff88, #00f2fe);
+            color: #030712;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 90%;
+            max-width: 400px;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #success-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            width: 55px;
+            height: 55px;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 28px;
+            box-shadow: 0 4px 25px rgba(37, 211, 102, 0.6);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: pulse-whatsapp 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            background-color: #20ba5a;
+            color: #fff;
+        }
+
+        @keyframes pulse-whatsapp {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        /* Header & Nav */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, rgba(5, 12, 30, 0.95), rgba(10, 25, 50, 0.9));
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(0, 242, 254, 0.3);
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .nav-container {
+            max-width: 1350px;
+            margin: 0 auto;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* 3D Enhanced Logo & Title Style */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, rgba(13, 22, 42, 0.9), rgba(6, 14, 28, 0.95));
+            border: 1.5px solid rgba(0, 242, 254, 0.4);
+            padding: 6px 16px 6px 8px;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.25), inset 0 0 12px rgba(0, 242, 254, 0.15);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .logo:hover {
+            transform: translateY(-3px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 12px 35px rgba(0, 242, 254, 0.45), inset 0 0 15px rgba(0, 242, 254, 0.25);
+        }
+
+        .logo-icon-circle {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #00f2fe, #00ff88);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #030712;
+            font-size: 1.1rem;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            flex-shrink: 0;
+            animation: pulse-logo 3s infinite alternate;
+        }
+
+        @keyframes pulse-logo {
+            0% { box-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
+            100% { box-shadow: 0 0 25px rgba(0, 255, 136, 0.8); }
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 242, 254, 0.3);
+            letter-spacing: 0.3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            list-style: none;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 4px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links button {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            padding: 6px 14px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links button:hover, .nav-links button.active {
+            color: #030712;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #030712;
+            padding: 8px 16px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+        }
+
+        /* Modal Popup Styles */
+        #connection-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            animation: fadeInModal 0.3s ease forwards;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: #0b1329;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px 20px;
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Page Management Sections */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .page-section.active-page {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modern 3D Interactive Hero Section Layout */
+        .hero-3d-wrapper {
+            position: relative;
+            padding: 70px 20px 60px;
+            max-width: 1350px;
+            margin: 0 auto;
+            perspective: 1200px;
+            overflow: hidden;
+        }
+
+        .hero-3d-card {
+            background: linear-gradient(135deg, rgba(13, 22, 42, 0.75), rgba(8, 16, 32, 0.85));
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            padding: 50px 25px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 80px rgba(0, 242, 254, 0.25), inset 0 0 30px rgba(0, 242, 254, 0.1);
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease-out, box-shadow 0.3s ease;
+        }
+
+        .badge-3d {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 242, 254, 0.12);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: var(--primary);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 22px;
+            transform: translateZ(30px);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+
+        .hero-3d-card h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 22px;
+            letter-spacing: -0.5px;
+            transform: translateZ(50px);
+            text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .hero-3d-card h1 span {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4));
+        }
+
+        .hero-3d-card p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 750px;
+            margin: 0 auto 35px;
+            transform: translateZ(35px);
+        }
+
+        .hero-actions-3d {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            transform: translateZ(40px);
+        }
+
+        /* Floating 3D Corner Badges - Both Positioned at Top Corners */
+        .corner-badge-3d {
+            position: absolute;
+            background: rgba(13, 22, 42, 0.92);
+            border: 1.5px solid var(--primary);
+            border-radius: 20px;
+            padding: 16px;
+            width: 260px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0, 242, 254, 0.3);
+            z-index: 10;
+            transition: all 0.4s ease;
+            animation: float3D 4s ease-in-out infinite alternate;
+        }
+
+        .corner-badge-3d.top-right {
+            top: 25px;
+            right: 25px;
+            direction: rtl;
+        }
+
+        .corner-badge-3d.top-left {
+            top: 25px;
+            left: 25px;
+            direction: rtl;
+            animation-delay: 2s;
+        }
+
+        .corner-badge-3d h4 {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 0.98rem;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+            line-height: 1.7;
+        }
+
+        .corner-badge-3d span {
+            display: block;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.72rem;
+            color: var(--accent);
+            font-weight: 700;
+            direction: ltr;
+            text-align: right;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes float3D {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-12px) rotate(1deg); }
+        }
+
+        /* 3D Highlight Stats Grid for Home Page */
+        .stats-3d-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding: 0 15px;
+        }
+
+        .stat-card-3d {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 22px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .stat-card-3d:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px rgba(0, 242, 254, 0.25);
+        }
+
+        .stat-card-3d i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.6));
+        }
+
+        .stat-card-3d h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stat-card-3d p {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 9px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Container Standard */
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 50px 15px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .section-header h2 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+
+        /* Package Sub-Tabs / Category Selector Style */
+        .package-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .pkg-tab-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pkg-tab-btn:hover, .pkg-tab-btn.active-tab {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #030712;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+        }
+
+        .pkg-category-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .pkg-category-content.active-category {
+            display: block;
+        }
+
+        /* Enhanced Installation Details Box Style (Pure White Urdu Text & Nastaliq Font) */
+        .installation-info-box {
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 35px 25px;
+            max-width: 850px;
+            margin: 0 auto;
+            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.18);
+            backdrop-filter: blur(15px);
+            direction: rtl;
+        }
+
+        .installation-info-box h3 {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+        }
+
+        .installation-info-box ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .installation-info-box li {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            line-height: 2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .installation-info-box li i {
+            color: var(--accent);
+            font-size: 1.25rem;
+            margin-top: 6px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.5));
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 25px 20px;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-color: rgba(0, 242, 254, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.15);
+        }
+
+        .service-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(79, 172, 254, 0.15));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .service-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+        }
+
+        .feature-list li i {
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        /* Compact & Beautiful Pricing Grid */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 22px 16px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(15px);
+            transition: all 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 242, 254, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.12);
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.18);
+            background: linear-gradient(180deg, rgba(0, 242, 254, 0.08) 0%, rgba(11, 19, 41, 0.85) 100%);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #030712;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Top-Right Corner Icon Style for Package Cards */
+        .card-corner-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(0, 255, 136, 0.15));
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.95rem;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+        }
+
+        .plan-header h3 {
+            font-size: 1.05rem;
+            margin-bottom: 2px;
+            padding-right: 40px;
+        }
+
+        .plan-type {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .price-tag {
+            display: flex;
+            align-items: baseline;
+            gap: 3px;
+            margin-bottom: 8px;
+        }
+
+        .price-tag .speed {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .price-tag .unit {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+
+        .price-amount {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 14px;
+            background: rgba(0, 255, 136, 0.08);
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .pricing-features li i {
+            color: var(--accent);
+            font-size: 0.7rem;
+        }
+
+        .pricing-card .btn-primary {
+            width: 100%;
+            justify-content: center;
+            padding: 7px;
+            font-size: 0.78rem;
+        }
+
+        /* Contact Page Layout */
+        .contact-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            align-items: start;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 22px;
+            backdrop-filter: blur(15px);
+            height: 100%;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: flex-start;
+        }
+
+        .info-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 242, 254, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .info-content h4 {
+            font-size: 0.92rem;
+            margin-bottom: 2px;
+        }
+
+        .info-content p {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .map-container {
+            margin-top: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            height: 150px;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 22px;
+            backdrop-filter: blur(15px);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 2px solid rgba(0, 242, 254, 0.25);
+            padding: 25px 15px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            margin-top: 50px;
+            background: linear-gradient(135deg, rgba(10, 25, 50, 0.95), rgba(3, 7, 18, 0.98));
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 992px) {
+            .corner-badge-3d {
+                position: relative;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-3d-card h1 { font-size: 1.9rem; }
+            .nav-container { flex-direction: column; gap: 10px; padding: 5px 10px; }
+            .logo { font-size: 0.9rem; padding: 5px 12px 5px 6px; }
+            .nav-links { width: 100%; justify-content: center; padding: 4px; }
+            .nav-actions { width: 100%; justify-content: center; }
+            .welcome-popup-card { padding: 25px 15px; max-width: 92%; }
+            .welcome-popup-card h2 { font-size: 1.4rem; }
+            .welcome-popup-card p { font-size: 0.85rem; }
+
+            header.mobile-hidden {
+                transform: translateY(-100%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader-wrapper">
+        <div class="loader-logo">
+            <div class="logo-icon-circle" style="width: 48px; height: 48px; font-size: 1.2rem;">
+                <i class="fa-solid fa-network-wired"></i>
+            </div>
+            Malik Technical & Internet Services
+        </div>
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Auto Welcome Popup Modal -->
+    <div id="welcome-popup-overlay">
+        <div class="welcome-popup-card">
+            <button class="welcome-close-btn" onclick="closeWelcomePopup()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="welcome-icon-box">
+                <i class="fa-solid fa-handshake-angle"></i>
+            </div>
+            <h2>السلام علیکم!</h2>
+            <p>محترم صارفین، آپ کا ہماری ویب سائٹ وزٹ کرنے کا بہت شکریہ۔ ہم آپ کو آپ کے ایریا علو والی میں فائبر آپٹک انٹرنیٹ، وائرلیس لنکس، سولر سسٹمز کی تنصیب اور تمام جدید ٹیکنیکل سروسز بہترین معیار کے ساتھ فراہم کر رہے ہیں۔ مزید معلومات یا نئے کنکشن کے لیے ہمارے آفس علو والی تشریف لائیں یا ہمارے واٹس ایپ نمبر 03185501799 پر رابطہ کریں۔</p>
+            <div class="welcome-footer-badge">
+                <i class="fa-solid fa-bolt"></i> Malik Technical & Internet Services
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Success Toast Popup -->
+    <div id="success-toast">
+        <i class="fa-solid fa-circle-check" style="font-size: 1.1rem;"></i> Your application is submitted & sent via WhatsApp!
+    </div>
+
+    <!-- Get Connection Popup Modal -->
+    <div id="connection-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="font-size: 1.25rem; margin-bottom: 15px; text-align: center;">Request New Connection</h3>
+            <form id="connection-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="cust-name" class="form-control" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone / WhatsApp Number</label>
+                    <input type="tel" id="cust-phone" class="form-control" placeholder="0318-5501799" required>
+                </div>
+                <div class="form-group">
+                    <label>Location / Address</label>
+                    <input type="text" id="cust-location" class="form-control" placeholder="Enter your street / area location" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Connection Medium</label>
+                        <select id="cust-medium" class="form-control">
+                            <option>FTTH Fiber Optic</option>
+                            <option>High-Speed Wireless</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Package</label>
+                        <select id="cust-package" class="form-control">
+                            <option>3 Mbps Home - Rs. 1,600</option>
+                            <option>4 Mbps Home - Rs. 1,900</option>
+                            <option>6 Mbps Home - Rs. 2,600</option>
+                            <option>8 Mbps Home - Rs. 3,000</option>
+                            <option>10 Mbps Home - Rs. 3,500</option>
+                            <option>12 Mbps Home - Rs. 4,000</option>
+                            <option>15 Mbps Home - Rs. 5,500</option>
+                            <option>20 Mbps Home - Rs. 7,500</option>
+                            <option>3 Mbps Commercial - Rs. 1,700</option>
+                            <option>4 Mbps Commercial - Rs. 2,000</option>
+                            <option>6 Mbps Commercial - Rs. 2,700</option>
+                            <option>10 Mbps Commercial - Rs. 3,600</option>
+                            <option>3 Mbps Wireless - Rs. 1,700</option>
+                            <option>4 Mbps Wireless - Rs. 2,000</option>
+                            <option>6 Mbps Wireless - Rs. 2,700</option>
+                            <option>8 Mbps Wireless - Rs. 3,100</option>
+                            <option>10 Mbps Wireless - Rs. 3,600</option>
+                            <option>12 Mbps Wireless - Rs. 4,100</option>
+                            <option>15 Mbps Wireless - Rs. 5,600</option>
+                            <option>20 Mbps Wireless - Rs. 7,600</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 11px; margin-top: 5px;"><i class="fa-solid fa-paper-plane"></i> Submit & Send WhatsApp</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/923185501799?text=Hello,%20I%20want%20to%20know%20more%20about%20your%20services." class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <header id="main-header">
+        <div class="nav-container">
+            <!-- 3D Enhanced Logo & Title -->
+            <a class="logo" onclick="switchPage('home')">
+                <div class="logo-icon-circle">
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+                <span>Malik Technical & Internet Services</span>
+            </a>
+
+            <!-- Center: Button Navigation Menu -->
+            <ul class="nav-links">
+                <li><button onclick="switchPage('home')" id="nav-home" class="active">Home</button></li>
+                <li><button onclick="switchPage('services')" id="nav-services">Services</button></li>
+                <li><button onclick="switchPage('packages')" id="nav-packages">Packages & Installation</button></li>
+                <li><button onclick="switchPage('contact')" id="nav-contact">Contact Us</button></li>
+            </ul>
+
+            <!-- Right: Action Buttons -->
+            <div class="nav-actions">
+                <button onclick="openModal()" class="btn-primary">
+                    <i class="fa-solid fa-headset"></i> Get Connection
+                </button>
+                <a href="https://ehtisham.site/client" target="_blank" class="btn-login">
+                    <i class="fa-solid fa-user-lock"></i> Customer Login
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 1. 3D ENHANCED HOME PAGE -->
+    <div id="page-home" class="page-section active-page">
+        <section class="hero-3d-wrapper">
+            <!-- Canvas Background for 3D Particle Nodes -->
+            <canvas id="hero-3d-canvas"></canvas>
+
+            <!-- Top Right Corner 3D Badge -->
+            <div class="corner-badge-3d top-right">
+                <h4>علو والی کا نمبر 1 ہائی اسپیڈ فائبر و وائرلیس نیٹ ورک</h4>
+                <span>100% Uptime | Low Ping Gaming</span>
+            </div>
+
+            <!-- Top Left Corner 3D Badge -->
+            <div class="corner-badge-3d top-left">
+                <h4>24/7 فوری ٹیکنیکل سپورٹ اور ہائبرڈ سولر بیک اپ</h4>
+                <span>FTTH Fiber Optic & Solar Certified</span>
+            </div>
+
+            <!-- Main Interactive 3D Central Card -->
+            <div class="hero-3d-card" id="tilt-card">
+                <div class="badge-3d">
+                    <i class="fa-solid fa-bolt"></i> Ultra-Fast Fiber Broadband & Tech Solutions
+                </div>
+                <h1>Empowering Your Digital World With<br><span>Next-Gen High Speed Broadband</span></h1>
+                <p>Experience uninterrupted 4K streaming, ultra-low ping gaming, and expert line maintenance services customized for homes and businesses in Alluwali & Mianwali.</p>
+                <div class="hero-actions-3d">
+                    <button onclick="switchPage('packages')" class="btn-primary" style="padding: 12px 28px; font-size: 0.9rem;"><i class="fa-solid fa-rocket"></i> Explore Packages</button>
+                    <button onclick="switchPage('services')" class="btn-outline" style="padding: 12px 28px; font-size: 0.9rem;"><i class="fa-solid fa-network-wired"></i> Our Technologies</button>
+                </div>
+            </div>
+
+            <!-- 3D Stat Counters Grid below Hero -->
+            <div class="stats-3d-grid">
+                <div class="stat-card-3d">
+                    <i class="fa-solid fa-tachograph-digital"></i>
+                    <h3>99.9%</h3>
+                    <p>Network Uptime Guarantee</p>
+                </div>
+                <div class="stat-card-3d">
+                    <i class="fa-solid fa-tower-cell"></i>
+                    <h3>100+</h3>
+                    <p>Fiber & Wireless Nodes</p>
+                </div>
+                <div class="stat-card-3d">
+                    <i class="fa-solid fa-headset"></i>
+                    <h3>24/7 Care</h3>
+                    <p>Instant Technical Support</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 2. SERVICES PAGE -->
+    <div id="page-services" class="page-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Technical & Network Services</h2>
+                <p>Complete professional solutions ranging from high-speed fiber internet to advanced technical and electrical works.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-network-wired"></i></div>
+                    <h3>FTTH Fiber Optic Broadband</h3>
+                    <p>Direct Gigabit Fiber-to-The-Home architecture ensuring maximum stability, low jitter, and symmetrical upload/download speeds for heavy data users.</p>
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-circle-check"></i> Pure optical fiber media</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Zero lag for online gaming</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Uncapped data bandwidth</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-tower-cell"></i></div>
+                    <h3>Wireless & Microwave Links</h3>
+                    <p>High-gain outdoor antenna alignment, point-to-multipoint microwave setups, and robust long-range wireless data distribution.</p>
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-circle-check"></i> Ubiquiti & MikroTik setup</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Long-range coverage</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Weather-proof outdoor gear</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-solar-panel"></i></div>
+                    <h3>Solar Power Installation</h3>
+                    <p>Complete solar system setup, inverter configuration, battery backup solutions, and dedicated grounding/surge protection implementation.</p>
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-circle-check"></i> Inverter & panel wiring</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Surge protection setup</li>
+                        <li><i class="fa-solid fa-circle-check"></i> System fault diagnosis</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <h3>Electrical & Line Maintenance</h3>
+                    <p>Professional power and utility line maintenance, pole climbing safety operations, wiring troubleshooting, and heavy-duty electrical works.</p>
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-circle-check"></i> Expert pole maintenance</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Safe wiring & grounding</li>
+                        <li><i class="fa-solid fa-circle-check"></i> 24/7 emergency support</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                    <h3>Computer & IT Support</h3>
+                    <p>PC and laptop hardware assembly, Windows installation, system performance optimization, driver updates, and custom software troubleshooting.</p>
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-circle-check"></i> OS installation & repairs</li>
+                        <li><i class="fa-solid fa-circle-check"></i> SSD & hardware upgrades</li>
+                        <li><i class="fa-solid fa-circle-check"></i> System speed tuning</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-server"></i></div>
+                    <h3>Network Routing & Automation</h3>
+                    <p>MikroTik router configuration, recursive failover setup, traffic bandwidth monitoring, and custom Python/Flask billing software management.</p>
+                    <ul class="feature-list">
+                        <li><i class="fa-solid fa-circle-check"></i> MikroTik RouterOS setup</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Automated client billing</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Secure network management</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. PACKAGES & INSTALLATION PAGE -->
+    <div id="page-packages" class="page-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Packages & Installation Details</h2>
+                <p>Choose your speed plan or check complete connection installation terms.</p>
+            </div>
+
+            <!-- Package Categories Tabs -->
+            <div class="package-tabs">
+                <button class="pkg-tab-btn active-tab" onclick="switchPackageCategory('home')">
+                    <i class="fa-solid fa-house"></i> Home Packages
+                </button>
+                <button class="pkg-tab-btn" onclick="switchPackageCategory('commercial')">
+                    <i class="fa-solid fa-building"></i> Commercial Packages
+                </button>
+                <button class="pkg-tab-btn" onclick="switchPackageCategory('wireless')">
+                    <i class="fa-solid fa-tower-cell"></i> Wireless Packages
+                </button>
+                <button class="pkg-tab-btn" onclick="switchPackageCategory('installation')">
+                    <i class="fa-solid fa-circle-info"></i> Installation Details
+                </button>
+            </div>
+
+            <!-- 1. HOME PACKAGES CATEGORY -->
+            <div id="cat-home" class="pkg-category-content active-category">
+                <div style="text-align: center; margin-bottom: 25px; color: var(--accent); font-family: 'Noto Nastaliq Urdu', serif; font-size: 0.95rem;">
+                    <i class="fa-solid fa-clock"></i> تمام ہوم پیکجز رات 10/11 بجے سے لے کر صبح 8 بجے تک ڈبل اسپیڈ پر چلتے ہیں۔
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-wifi"></i></div>
+                        <div>
+                            <div class="plan-type">Starter Tier</div>
+                            <div class="plan-header"><h3>Basic Connect</h3></div>
+                            <div class="price-tag"><span class="speed">3 Mbps</span><span class="unit">/ Home</span></div>
+                            <div class="price-amount">Rs. 1,600 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Web & Chat</li>
+                                <li><i class="fa-solid fa-check"></i> Standard Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-house-user"></i></div>
+                        <div>
+                            <div class="plan-type">Starter Tier</div>
+                            <div class="plan-header"><h3>Mini Home</h3></div>
+                            <div class="price-tag"><span class="speed">4 Mbps</span><span class="unit">/ Home</span></div>
+                            <div class="price-amount">Rs. 1,900 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> SD Streaming</li>
+                                <li><i class="fa-solid fa-check"></i> Standard Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+                        <div>
+                            <div class="plan-type">Silver Tier</div>
+                            <div class="plan-header"><h3>Silver Saver</h3></div>
+                            <div class="price-tag"><span class="speed">6 Mbps</span><span class="unit">/ Home</span></div>
+                            <div class="price-amount">Rs. 2,600 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> HD Streaming</li>
+                                <li><i class="fa-solid fa-check"></i> Wi-Fi Router</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-tv"></i></div>
+                        <div>
+                            <div class="plan-type">Silver Tier</div>
+                            <div class="plan-header"><h3>Silver Plus</h3></div>
+                            <div class="price-tag"><span class="speed">8 Mbps</span><span class="unit">/ Home</span></div>
+                            <div class="price-amount">Rs. 3,000 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Multi-Device</li>
+                                <li><i class="fa-solid fa-check"></i> Wi-Fi Router</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-people-roof"></i></div>
+                        <div>
+                            <div class="plan-type">Gold Tier</div>
+                            <div class="plan-header"><h3>Gold Family</h3></div>
+                            <div class="price-tag"><span class="speed">10 Mbps</span><span class="unit">/ Home</span></div>
+                            <div class="price-amount">Rs. 3,500 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> 4K Streaming</li>
+                                <li><i class="fa-solid fa-check"></i> Priority Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-bolt"></i></div>
+                        <div>
+                            <div class="plan-type">Gold Tier</div>
+                            <div class="plan-header"><h3>Gold Pro</h3></div>
+                            <div class="price-tag"><span class="speed">12 Mbps</span><span class="unit">/ Home</span></div>
+                            <div class="price-amount">Rs. 4,000 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Fast Downloads</li>
+                                <li><i class="fa-solid fa-check"></i> Priority Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">Popular</div>
+                        <div class="card-corner-icon"><i class="fa-solid fa-gamepad"></i></div>
+                        <div>
+                            <div class="plan-type">Platinum Tier</div>
+                            <div class="plan-header"><h3>Platinum Speed</h3></div>
+                            <div class="price-tag"><span class="speed">15 Mbps</span><span class="unit">/ Home</span></div>
+                            <div class="price-amount">Rs. 5,500 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Low Ping Gaming</li>
+                                <li><i class="fa-solid fa-check"></i> 24/7 Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-gem"></i></div>
+                        <div>
+                            <div class="plan-type">Diamond Tier</div>
+                            <div class="plan-header"><h3>Diamond Exec</h3></div>
+                            <div class="price-tag"><span class="speed">20 Mbps</span><span class="unit">/ Home</span></div>
+                            <div class="price-amount">Rs. 7,500 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Symmetrical Speed</li>
+                                <li><i class="fa-solid fa-check"></i> Heavy Gaming</li>
+                                <li><i class="fa-solid fa-check"></i> Dedicated SLA</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. COMMERCIAL PACKAGES CATEGORY -->
+            <div id="cat-commercial" class="pkg-category-content">
+                <div style="text-align: center; margin-bottom: 25px; color: var(--accent); font-family: 'Noto Nastaliq Urdu', serif; font-size: 0.95rem;">
+                    <i class="fa-solid fa-clock"></i> تمام کمرشل پیکجز صبح 5 بجے سے لے کر شام 6 بجے تک ڈبل اسپیڈ پر چلتے ہیں۔
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-store"></i></div>
+                        <div>
+                            <div class="plan-type">Commercial</div>
+                            <div class="plan-header"><h3>Comm 3 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">3 Mbps</span><span class="unit">/ Office</span></div>
+                            <div class="price-amount">Rs. 1,700 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Business Grade</li>
+                                <li><i class="fa-solid fa-check"></i> Stable Link</li>
+                                <li><i class="fa-solid fa-check"></i> Business Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-briefcase"></i></div>
+                        <div>
+                            <div class="plan-type">Commercial</div>
+                            <div class="plan-header"><h3>Comm 4 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">4 Mbps</span><span class="unit">/ Office</span></div>
+                            <div class="price-amount">Rs. 2,000 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Business Grade</li>
+                                <li><i class="fa-solid fa-check"></i> High Stability</li>
+                                <li><i class="fa-solid fa-check"></i> Business Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-building"></i></div>
+                        <div>
+                            <div class="plan-type">Commercial</div>
+                            <div class="plan-header"><h3>Comm 6 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">6 Mbps</span><span class="unit">/ Office</span></div>
+                            <div class="price-amount">Rs. 2,700 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Business Grade</li>
+                                <li><i class="fa-solid fa-check"></i> Multi-User Office</li>
+                                <li><i class="fa-solid fa-check"></i> Priority SLA</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">Business</div>
+                        <div class="card-corner-icon"><i class="fa-solid fa-city"></i></div>
+                        <div>
+                            <div class="plan-type">Commercial</div>
+                            <div class="plan-header"><h3>Comm 10 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">10 Mbps</span><span class="unit">/ Office</span></div>
+                            <div class="price-amount">Rs. 3,600 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Corporate Grade</li>
+                                <li><i class="fa-solid fa-check"></i> Dedicated Bandwidth</li>
+                                <li><i class="fa-solid fa-check"></i> 24/7 VIP Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. WIRELESS PACKAGES CATEGORY -->
+            <div id="cat-wireless" class="pkg-category-content">
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-signal"></i></div>
+                        <div>
+                            <div class="plan-type">Wireless Tier</div>
+                            <div class="plan-header"><h3>Air Link 3 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">3 Mbps</span><span class="unit">/ Wireless</span></div>
+                            <div class="price-amount">Rs. 1,700 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Outdoor CPE Gear</li>
+                                <li><i class="fa-solid fa-check"></i> Wireless Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-rss"></i></div>
+                        <div>
+                            <div class="plan-type">Wireless Tier</div>
+                            <div class="plan-header"><h3>Air Link 4 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">4 Mbps</span><span class="unit">/ Wireless</span></div>
+                            <div class="price-amount">Rs. 2,000 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Outdoor CPE Gear</li>
+                                <li><i class="fa-solid fa-check"></i> Wireless Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-tower-cell"></i></div>
+                        <div>
+                            <div class="plan-type">Wireless Tier</div>
+                            <div class="plan-header"><h3>Air Link 6 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">6 Mbps</span><span class="unit">/ Wireless</span></div>
+                            <div class="price-amount">Rs. 2,700 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> HD Streaming Link</li>
+                                <li><i class="fa-solid fa-check"></i> Outdoor Antenna Setup</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-tower-broadcast"></i></div>
+                        <div>
+                            <div class="plan-type">Wireless Tier</div>
+                            <div class="plan-header"><h3>Air Link 8 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">8 Mbps</span><span class="unit">/ Wireless</span></div>
+                            <div class="price-amount">Rs. 3,100 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Multi-Device Air</li>
+                                <li><i class="fa-solid fa-check"></i> Outdoor Antenna Setup</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+                        <div>
+                            <div class="plan-type">Wireless Tier</div>
+                            <div class="plan-header"><h3>Air Link 10 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">10 Mbps</span><span class="unit">/ Wireless</span></div>
+                            <div class="price-amount">Rs. 3,600 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> High-Gain Link</li>
+                                <li><i class="fa-solid fa-check"></i> Priority Wireless Care</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
+                        <div>
+                            <div class="plan-type">Wireless Tier</div>
+                            <div class="plan-header"><h3>Air Link 12 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">12 Mbps</span><span class="unit">/ Wireless</span></div>
+                            <div class="price-amount">Rs. 4,100 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Fast Air Download</li>
+                                <li><i class="fa-solid fa-check"></i> Priority Wireless Care</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">Fast Air</div>
+                        <div class="card-corner-icon"><i class="fa-solid fa-rocket"></i></div>
+                        <div>
+                            <div class="plan-type">Wireless Tier</div>
+                            <div class="plan-header"><h3>Air Link 15 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">15 Mbps</span><span class="unit">/ Wireless</span></div>
+                            <div class="price-amount">Rs. 5,600 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Unlimited Data</li>
+                                <li><i class="fa-solid fa-check"></i> Low Ping Wireless</li>
+                                <li><i class="fa-solid fa-check"></i> 24/7 Support Care</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="card-corner-icon"><i class="fa-solid fa-crown"></i></div>
+                        <div>
+                            <div class="plan-type">Wireless Tier</div>
+                            <div class="plan-header"><h3>Air Link 20 Mbps</h3></div>
+                            <div class="price-tag"><span class="speed">20 Mbps</span><span class="unit">/ Wireless</span></div>
+                            <div class="price-amount">Rs. 7,600 / mo</div>
+                            <ul class="pricing-features">
+                                <li><i class="fa-solid fa-check"></i> Maximum Air Bandwidth</li>
+                                <li><i class="fa-solid fa-check"></i> Heavy Tower Signal</li>
+                                <li><i class="fa-solid fa-check"></i> Dedicated SLA Care</li>
+                            </ul>
+                        </div>
+                        <button onclick="openModal()" class="btn-primary">Order Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. INSTALLATION DETAILS CATEGORY -->
+            <div id="cat-installation" class="pkg-category-content">
+                <div class="installation-info-box">
+                    <h3>کنیکشن اور انسٹالیشن کی تفصیلات</h3>
+                    <ul>
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>کنیکشن انسٹالیشن فیس:</strong> 2,500 روپے (ایک بار ادا کی جاتی ہے)۔</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>سنگل بینڈ ماڈیم چارجز:</strong> 3,500 روپے (اگر آپ اپنا ماڈیم لگائیں گے تو یہ ماڈیم کے چارجز نہیں دینے پڑیں گے)۔</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>ڈوئل بینڈ ماڈیم:</strong> ڈوئل بینڈ ماڈیم لگانے کی صورت میں موجودہ چارجز لیے جائیں گے۔</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>وائر کی فراہمی:</strong> اس کنیکشن کے ساتھ 30 میٹر وائر دی جاتی ہے۔</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>اضافی وائر (Extra Wire):</strong> 30 میٹر سے زائد وائر لگنے کی صورت میں وائر کی موجودہ قیمت پر میٹر کے حساب سے چارج ہوگی۔</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 4. CONTACT US PAGE -->
+    <div id="page-contact" class="page-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get In Touch With Us</h2>
+                <p>Reach out for new connections, technical assistance, or customer support inquiries.</p>
+            </div>
+            <div class="contact-layout">
+                <div class="contact-info-card">
+                    <h3 style="font-size: 1.15rem; margin-bottom: 14px;">Contact Information</h3>
+                    
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div class="info-content">
+                            <h4>Office Location</h4>
+                            <p>علو والی، Mianwali District, Pakistan</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-phone-volume"></i></div>
+                        <div class="info-content">
+                            <h4>Phone & WhatsApp</h4>
+                            <p>+92 318 5501799</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div class="info-content">
+                            <h4>Email Support</h4>
+                            <p>malikisp799@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d108756.97!2d71.5!3d32.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzLCsDMwJzAwLjAiTiA3McKwMzAnMDAuMCJF!5e0!3m2!1sen!2sPK!4v1600000000000!5m2!1sen!2sPK" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3 style="font-size: 1.15rem; margin-bottom: 14px;">Direct Inquiry Form</h3>
+                    <form action="#" method="POST" onsubmit="handleContactSubmit(event)">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="contact-name" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone / WhatsApp Number</label>
+                            <input type="tel" id="contact-phone" class="form-control" placeholder="0318-5501799" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Message / Inquiry</label>
+                            <textarea id="contact-msg" class="form-control" rows="2" placeholder="Write your message here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 10px;"><i class="fa-solid fa-paper-plane"></i> Send via WhatsApp</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Malik Technical & Internet Services. All rights reserved. Powered by Muhammad Wasif Malik(CEO).</p>
+    </footer>
+
+    <script>
+        // Hide loader when window loads completely and trigger auto welcome popup
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader-wrapper');
+            setTimeout(function() {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+
+                // Show Welcome Popup after loader disappears
+                setTimeout(function() {
+                    const welcomePopup = document.getElementById('welcome-popup-overlay');
+                    welcomePopup.classList.add('show-popup');
+
+                    // Auto hide welcome popup after 20 seconds
+                    setTimeout(function() {
+                        closeWelcomePopup();
+                    }, 20000);
+
+                }, 400);
+
+            }, 500);
+
+            // Initialize 3D Canvas Particles for Home Page
+            init3DCanvas();
+        });
+
+        // Interactive 3D Canvas Node Animation
+        function init3DCanvas() {
+            const canvas = document.getElementById('hero-3d-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = canvas.parentElement.offsetWidth;
+            let height = canvas.height = canvas.parentElement.offsetHeight;
+
+            window.addEventListener('resize', function() {
+                if (!canvas) return;
+                width = canvas.width = canvas.parentElement.offsetWidth;
+                height = canvas.height = canvas.parentElement.offsetHeight;
+            });
+
+            const particles = [];
+            const numParticles = 40;
+
+            for (let i = 0; i < numParticles; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 3 + 1,
+                    color: Math.random() > 0.5 ? '#00f2fe' : '#00ff88',
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                for (let i = 0; i < particles.length; i++) {
+                    let p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = p.color;
+                    ctx.fill();
+
+                    // Connect lines between nearby particles
+                    for (let j = i + 1; j < particles.length; j++) {
+                        let p2 = particles[j];
+                        let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                        if (dist < 110) {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = `rgba(0, 242, 254, ${1 - dist / 110})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // Mouse Move 3D Tilt Effect on Home Main Card
+        const tiltCard = document.getElementById('tilt-card');
+        if (tiltCard) {
+            document.addEventListener('mousemove', function(e) {
+                if (window.innerWidth <= 768) return;
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 35;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 35;
+                tiltCard.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            });
+        }
+
+        // Close Welcome Popup Function
+        function closeWelcomePopup() {
+            const welcomePopup = document.getElementById('welcome-popup-overlay');
+            welcomePopup.classList.remove('show-popup');
+        }
+
+        // Mobile Scroll Header Hide & Show Logic
+        let lastScrollTop = 0;
+        const header = document.getElementById('main-header');
+
+        window.addEventListener('scroll', function() {
+            if (window.innerWidth <= 768) {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop && scrollTop > 60) {
+                    header.classList.add('mobile-hidden');
+                } else {
+                    header.classList.remove('mobile-hidden');
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }
+        });
+
+        // Modal Pop-up functions for Get Connection
+        function openModal() {
+            document.getElementById('connection-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('connection-modal').style.display = 'none';
+        }
+
+        // Handle Connection Form Submit & Redirect to WhatsApp
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const location = document.getElementById('cust-location').value;
+            const medium = document.getElementById('cust-medium').value;
+            const pkg = document.getElementById('cust-package').value;
+
+            const whatsappNumber = "923185501799";
+            const message = `*New Internet Connection Request*%0A%0A*Name:* ${encodeURIComponent(name)}%0A*Phone:* ${encodeURIComponent(phone)}%0A*Location:* ${encodeURIComponent(location)}%0A*Medium:* ${encodeURIComponent(medium)}%0A*Package:* ${encodeURIComponent(pkg)}`;
+
+            closeModal();
+            document.getElementById('connection-form').reset();
+
+            const toast = document.getElementById('success-toast');
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3500);
+
+            window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+        }
+
+        // Handle Contact Us Form Submit & Redirect to WhatsApp
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const msg = document.getElementById('contact-msg').value;
+
+            const whatsappNumber = "923185501799";
+            const message = `*Website Contact Inquiry*%0A%0A*Name:* ${encodeURIComponent(name)}%0A*Phone:* ${encodeURIComponent(phone)}%0A*Message:* ${encodeURIComponent(msg)}`;
+
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+            document.getElementById('contact-msg').value = '';
+
+            window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('connection-modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Switch Page Function
+        function switchPage(pageId) {
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(function(page) {
+                page.classList.remove('active-page');
+            });
+
+            const activePage = document.getElementById('page-' + pageId);
+            if (activePage) {
+                activePage.classList.add('active-page');
+            }
+
+            const navButtons = document.querySelectorAll('.nav-links button');
+            navButtons.forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            
+            const activeBtn = document.getElementById('nav-' + pageId);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Switch Package Categories
+        function switchPackageCategory(catName) {
+            const categories = document.querySelectorAll('.pkg-category-content');
+            categories.forEach(function(cat) {
+                cat.classList.remove('active-category');
+            });
+
+            const activeCat = document.getElementById('cat-' + catName);
+            if (activeCat) {
+                activeCat.classList.add('active-category');
+            }
+
+            const tabButtons = document.querySelectorAll('.pkg-tab-btn');
+            tabButtons.forEach(function(btn) {
+                btn.classList.remove('active-tab');
+            });
+            
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active-tab');
+            }
+        }
+    </script>
+</body>
+</html>
